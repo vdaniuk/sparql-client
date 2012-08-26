@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="Sparql-client : SPARQL client for Ruby." />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Sparql-client</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/ruby-rdf/sparql-client">View on GitHub</a>
+
+          <h1 id="project_title">Sparql-client</h1>
+          <h2 id="project_tagline">SPARQL client for Ruby.</h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/ruby-rdf/sparql-client/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/ruby-rdf/sparql-client/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h1>SPARQL Client for RDF.rb</h1>
+
+<p>This is a <a href="http://ruby-lang.org/">Ruby</a> implementation of a <a href="http://en.wikipedia.org/wiki/SPARQL">SPARQL</a> client for <a href="http://rubygems.org/gems/rdf">RDF.rb</a>.</p>
+
+<ul>
+<li><a href="http://github.com/bendiken/sparql-client">http://github.com/bendiken/sparql-client</a></li>
+</ul><h2>Features</h2>
+
+<ul>
+<li>Executes queries against any SPARQL 1.0-compatible endpoints over HTTP.</li>
+<li>Provides a query builder <a href="http://en.wikipedia.org/wiki/Domain-specific_language" title="domain-specific language">DSL</a> for <code>ASK</code>, <code>SELECT</code>, <code>DESCRIBE</code> and
+<code>CONSTRUCT</code> queries.</li>
+<li>Supports tuple result sets in both XML and JSON formats, with JSON being
+the preferred default for content negotiation purposes.</li>
+<li>Supports graph results in any RDF serialization format understood by RDF.rb.</li>
+<li>Returns results using the <a href="http://blog.datagraph.org/2010/03/rdf-for-ruby">RDF.rb object model</a>.</li>
+<li>Supports accessing endpoints as read-only <a href="http://rubydoc.info/github/ruby-rdf/rdf/RDF/Repository"><code>RDF::Repository</code></a>
+instances.</li>
+</ul><h2>Examples</h2>
+
+<pre><code>require 'sparql/client'
+
+sparql = SPARQL::Client.new("http://dbpedia.org/sparql")
+</code></pre>
+
+<h3>Executing a boolean query and outputting the result</h3>
+
+<pre><code># ASK WHERE { ?s ?p ?o }
+result = sparql.ask.whether([:s, :p, :o]).true?
+
+puts result.inspect   #=&gt; true or false
+</code></pre>
+
+<h3>Executing a tuple query and iterating over the returned solutions</h3>
+
+<pre><code># SELECT * WHERE { ?s ?p ?o } OFFSET 100 LIMIT 10
+query = sparql.select.where([:s, :p, :o]).offset(100).limit(10)
+
+query.each_solution do |solution|
+  puts solution.inspect
+end
+</code></pre>
+
+<h3>Executing a graph query and iterating over the returned statements</h3>
+
+<pre><code># CONSTRUCT { ?s ?p ?o } WHERE { ?s ?p ?o } LIMIT 10
+query = sparql.construct([:s, :p, :o]).where([:s, :p, :o]).limit(10)
+
+query.each_statement do |statement|
+  puts statement.inspect
+end
+</code></pre>
+
+<h3>Executing an arbitrary textual SPARQL query string</h3>
+
+<pre><code>result = sparql.query("ASK WHERE { ?s ?p ?o }")
+
+puts result.inspect   #=&gt; true or false
+</code></pre>
+
+<h2>Documentation</h2>
+
+<p><a href="http://sparql.rubyforge.org/client/">http://sparql.rubyforge.org/client/</a></p>
+
+<ul>
+<li>{SPARQL::Client}
+
+<ul>
+<li>{SPARQL::Client::Query}</li>
+<li>{SPARQL::Client::Repository}</li>
+</ul>
+</li>
+</ul><h2>Dependencies</h2>
+
+<ul>
+<li>
+<a href="http://ruby-lang.org/">Ruby</a> (&gt;= 1.8.7) or (&gt;= 1.8.1 with <a href="http://rubygems.org/gems/backports">Backports</a>)</li>
+<li>
+<a href="http://rubygems.org/gems/rdf">RDF.rb</a> (&gt;= 0.3.0)</li>
+<li>
+<a href="http://rubygems.org/gems/json_pure">JSON</a> (&gt;= 1.4.2)</li>
+</ul><h2>Installation</h2>
+
+<p>The recommended installation method is via <a href="http://rubygems.org/">RubyGems</a>.
+To install the latest official release of the <code>SPARQL::Client</code> gem, do:</p>
+
+<pre><code>% [sudo] gem install sparql-client
+</code></pre>
+
+<h2>Download</h2>
+
+<p>To get a local working copy of the development repository, do:</p>
+
+<pre><code>% git clone git://github.com/bendiken/sparql-client.git
+</code></pre>
+
+<p>Alternatively, download the latest development version as a tarball as
+follows:</p>
+
+<pre><code>% wget http://github.com/bendiken/sparql-client/tarball/master
+</code></pre>
+
+<h2>Mailing List</h2>
+
+<ul>
+<li><a href="http://lists.w3.org/Archives/Public/public-rdf-ruby/">http://lists.w3.org/Archives/Public/public-rdf-ruby/</a></li>
+</ul><h2>Authors</h2>
+
+<ul>
+<li>
+<a href="http://github.com/bendiken">Arto Bendiken</a> - <a href="http://ar.to/">http://ar.to/</a>
+</li>
+<li>
+<a href="http://github.com/bhuga">Ben Lavender</a> - <a href="http://bhuga.net/">http://bhuga.net/</a>
+</li>
+</ul><h2>Contributors</h2>
+
+<ul>
+<li>
+<a href="http://github.com/b4d">Christoph Badura</a> - <a href="http://github.com/b4d">http://github.com/b4d</a>
+</li>
+<li>
+<a href="http://github.com/jamespjh">James Hetherington</a> - <a href="http://twitter.com/jamespjh">http://twitter.com/jamespjh</a>
+</li>
+<li>
+<a href="http://github.com/cldwalker">Gabriel Horner</a> - <a href="http://tagaholic.me/">http://tagaholic.me/</a>
+</li>
+<li>
+<a href="http://github.com/njh">Nicholas Humfrey</a> - <a href="http://www.aelius.com/njh/">http://www.aelius.com/njh/</a>
+</li>
+<li>
+<a href="http://github.com/fumi">Fumihiro Kato</a> - <a href="http://fumi.me/">http://fumi.me/</a>
+</li>
+<li>
+<a href="http://github.com/drankard">David Nielsen</a> - <a href="http://github.com/drankard">http://github.com/drankard</a>
+</li>
+<li>
+<a href="http://github.com/selvan">Thamaraiselvan Poomalai</a> - <a href="http://softonaut.blogspot.com/">http://softonaut.blogspot.com/</a>
+</li>
+<li>
+<a href="http://github.com/gkellogg">Gregg Kellogg</a> - <a href="http://kellogg-assoc.com/">http://kellogg-assoc.com/</a>
+</li>
+<li>
+<a href="http://github.com/mikaa123">Michael Sokol</a> - <a href="http://sokolmichael.com/">http://sokolmichael.com/</a>
+</li>
+</ul><h2>Contributing</h2>
+
+<ul>
+<li>Do your best to adhere to the existing coding conventions and idioms.</li>
+<li>Don't use hard tabs, and don't leave trailing whitespace on any line.</li>
+<li>Do document every method you add using <a href="http://yardoc.org/">YARD</a> annotations. Read the
+<a href="http://rubydoc.info/docs/yard/file/docs/GettingStarted.md">tutorial</a> or just look at the existing code for examples.</li>
+<li>Don't touch the <code>.gemspec</code>, <code>VERSION</code> or <code>AUTHORS</code> files. If you need to
+change them, do so on your private branch only.</li>
+<li>Do feel free to add yourself to the <code>CREDITS</code> file and the corresponding
+list in the the <code>README</code>. Alphabetical order applies.</li>
+<li>Do note that in order for us to merge any non-trivial changes (as a rule
+of thumb, additions larger than about 15 lines of code), we need an
+explicit <a href="http://unlicense.org/#unlicensing-contributions">public domain dedication</a> on record from you.</li>
+</ul><h2>Resources</h2>
+
+<ul>
+<li><a href="http://sparql.rubyforge.org/client/">http://sparql.rubyforge.org/client/</a></li>
+<li><a href="http://github.com/bendiken/sparql-client">http://github.com/bendiken/sparql-client</a></li>
+<li><a href="http://rubygems.org/gems/sparql-client">http://rubygems.org/gems/sparql-client</a></li>
+<li><a href="http://rubyforge.org/projects/sparql/">http://rubyforge.org/projects/sparql/</a></li>
+<li><a href="http://raa.ruby-lang.org/project/sparql-client/">http://raa.ruby-lang.org/project/sparql-client/</a></li>
+<li><a href="http://www.ohloh.net/p/rdf">http://www.ohloh.net/p/rdf</a></li>
+</ul><h2>License</h2>
+
+<p>This is free and unencumbered public domain software. For more information,
+see <a href="http://unlicense.org/">http://unlicense.org/</a> or the accompanying {file:UNLICENSE} file.</p>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Sparql-client maintained by <a href="https://github.com/ruby-rdf">ruby-rdf</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>
