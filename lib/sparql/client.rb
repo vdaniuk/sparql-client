@@ -1,6 +1,7 @@
-require 'net/http' # @see http://rubygems.org/gems/net-http-persistent
 require 'rdf'                 # @see http://rubygems.org/gems/rdf
 require 'rdf/ntriples'        # @see http://rubygems.org/gems/rdf
+require 'typhoeus'
+
 begin
   require 'nokogiri'
 rescue LoadError
@@ -40,7 +41,7 @@ module SPARQL
       '*/*;p=0.1'
     ].join(', ').freeze
     GRAPH_ALL  = (
-      RDF::Format.content_types.keys + 
+      RDF::Format.content_types.keys +
       ['*/*;p=0.1']
     ).join(', ').freeze
 
@@ -87,6 +88,9 @@ module SPARQL
     # @option options [Number] :protocol (DEFAULT_PROTOCOL)
     # @option options [Hash] :headers
     # @option options [Hash] :read_timeout
+
+    #yanking NET::HTTP::Persistent for typhoeus
+
     def initialize(url, options = {}, &block)
       case url
       when RDF::Queryable
@@ -643,7 +647,8 @@ module SPARQL
           value = ENV['https_proxy']
           proxy_url = URI.parse(value) unless value.nil? || value.empty?
       end
-      klass = Net::HTTP.new(self.class.to_s, proxy_url)
+      klass = Net::HTTP::Persistent.new(self.class.to_s, proxy_url)
+      klass.keep_alive = 2 # increase to 2 minutes
       klass.read_timeout = @options[:read_timeout] || 60
       klass
     end
