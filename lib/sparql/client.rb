@@ -1,3 +1,4 @@
+require 'net/http/persistent'                 # @see http://rubygems.org/gems/rdf
 require 'rdf'                 # @see http://rubygems.org/gems/rdf
 require 'rdf/ntriples'        # @see http://rubygems.org/gems/rdf
 require 'typhoeus'
