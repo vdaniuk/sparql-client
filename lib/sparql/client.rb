@@ -1,4 +1,4 @@
-require 'net/http/persistent' # @see http://rubygems.org/gems/net-http-persistent
+require 'net/http' # @see http://rubygems.org/gems/net-http-persistent
 require 'rdf'                 # @see http://rubygems.org/gems/rdf
 require 'rdf/ntriples'        # @see http://rubygems.org/gems/rdf
 begin
@@ -643,7 +643,7 @@ module SPARQL
           value = ENV['https_proxy']
           proxy_url = URI.parse(value) unless value.nil? || value.empty?
       end
-      klass = Net::HTTP::Persistent.new(self.class.to_s, proxy_url)
+      klass = Net::HTTP.new(self.class.to_s, proxy_url)
       klass.keep_alive = 120 # increase to 2 minutes
       klass.read_timeout = @options[:read_timeout] || 60
       klass
@@ -678,8 +678,8 @@ module SPARQL
         if response.kind_of? Net::HTTPRedirection
           response = @http.request(RDF::URI(response['location']), request)
         else
-          return block_given? ? block.call(response) : response 
-        end          
+          return block_given? ? block.call(response) : response
+        end
       end
       raise ServerError, "Infinite redirect at #{url}. Redirected more than 10 times."
     end
@@ -717,7 +717,7 @@ module SPARQL
     # @see    http://www.w3.org/TR/sparql11-protocol/#query-via-post-urlencoded
     def make_post_request(query, headers = {})
       if @alt_endpoint.nil?
-        endpoint = url.request_uri 
+        endpoint = url.request_uri
       else
         endpoint = @alt_endpoint
       end
